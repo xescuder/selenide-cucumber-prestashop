@@ -3,6 +3,9 @@ package com.upc.prestashop.pages;
 import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Selenide.$$;
 
+/**
+ * Shopping cart page
+ */
 public class ShoppingCartPage extends TemplatePage {
     public void open() {
         header.openCart();

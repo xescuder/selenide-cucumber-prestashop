@@ -4,6 +4,9 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selectors.byCssSelector;
 import static com.codeborne.selenide.Selenide.$$;
 
+/**
+ * Product list page
+ */
 public class ProductListPage extends TemplatePage {
     public void searchProduct(String productName) {
         header.searchProduct(productName);

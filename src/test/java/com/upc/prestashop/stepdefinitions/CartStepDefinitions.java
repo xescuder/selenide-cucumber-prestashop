@@ -10,6 +10,9 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import static org.assertj.core.api.Assertions.*;
 
+/**
+ * Cart step definitions
+ */
 public class CartStepDefinitions {
     @Given("Xavier has an empty basket")
     public void i_have_an_empty_basket() {
