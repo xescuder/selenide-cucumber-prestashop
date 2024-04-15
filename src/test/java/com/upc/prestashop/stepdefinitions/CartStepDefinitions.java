@@ -1,6 +1,5 @@
 package com.upc.prestashop.stepdefinitions;
 
-
 import com.upc.prestashop.pages.HomePage;
 import com.upc.prestashop.pages.ProductListPage;
 import com.upc.prestashop.pages.ProductPage;
@@ -28,17 +27,12 @@ public class CartStepDefinitions {
 
         ProductPage productPage = new ProductPage();
         productPage.addProductToCart();
-
-        ShoppingCartPage shoppingCartPage = new ShoppingCartPage();
-        shoppingCartPage.open();
-        int productQty = shoppingCartPage.getProductQty(productName);
-        assertThat(productQty).isEqualTo(1);
     }
 
     @Then("he/she should see the {string} in the cart with quantity {int}")
     public void i_should_see_the_item_in_the_cart(String item, int quantity) {
         ShoppingCartPage shoppingCartPage = new ShoppingCartPage();
-        shoppingCartPage.open();
+        shoppingCartPage.openPage();
         int productQty = shoppingCartPage.getProductQty(item);
         assertThat(productQty).isEqualTo(quantity);
     }
