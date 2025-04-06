@@ -35,6 +35,7 @@ Replace your pom.xml with the one in this repository:
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
         <allure-cucumber7-jvm.version>2.29.1</allure-cucumber7-jvm.version>
         <allure-maven.version>2.11.2</allure-maven.version>
+        <allure-selenide.version>2.29.1</allure-selenide.version>
     </properties>
 
 
@@ -76,6 +77,12 @@ Replace your pom.xml with the one in this repository:
             <version>${allure-cucumber7-jvm.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-selenide</artifactId>
+            <version>${allure-selenide.version}</version>
+        </dependency>
+
     </dependencies>
     <build>
         <pluginManagement>
@@ -89,6 +96,18 @@ Replace your pom.xml with the one in this repository:
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <properties>
+                        <configurationParameters>
+                            cucumber.junit-platform.naming-strategy=long
+                        </configurationParameters>
+                    </properties>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
@@ -240,16 +259,30 @@ import org.junit.runner.RunWith;
 /**
  * Runner class
  */
+package com.upc.prestashop.runners;
+
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import io.qameta.allure.selenide.AllureSelenide;
+import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
+
+/**
+ * Runner class
+ */
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        plugin = {
-                "pretty",
-                "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm",
-        },
-        features = "./src/test/resources/features",
-        glue = {"com.upc.prestashop.stepdefinitions"}
+        features = "src/test/resources/features",
+        glue = {"com.upc.prestashop.stepdefinitions"},
+        plugin = {"pretty",
+                "junit:target/cucumber-reports/Cucumber.xml",
+                "html:target/cucumber-reports/Cucumber.html",
+                "json:target/cucumber-reports/Cucumber.json",
+                "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
+        }
 )
-public class CucumberRunner {
+public class CucumberTest {
 }
 ```
 
@@ -261,17 +294,68 @@ Create in `test\resources` a new file `allure.properties` with the following con
 allure.results.directory=target/allure-results
 ```
 
-From IDE run the CucumberRunner class.
+Create also file `selenide.properties` with the following content:
 
+```properties
+selenide.reportsFolder=target/allure-results
+```
 
+Execute the maven `test` goal from IDE. Check the console output. 
 
+Check you've a new folder target/allure-results with the results of the test.
 
-
+Execute the command `mvn allure:report` to generate HTML and `mvn allure:serve` to see the report.
 
 
 ## Implement the real steps with Selenium
 
 Now we need to implement the steps with Selenium and Selenide (optional).
 
+```java
+package com.upc.prestashop.stepdefinitions;
+
+import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideElement;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Selectors.byCssSelector;
+import static com.codeborne.selenide.Selectors.byName;
+import static com.codeborne.selenide.Selenide.*;
+
+public class CartStepDefinitions {
+
+    @Given("Xavier has an empty basket")
+    public void xavier_has_an_empty_basket() {
+        open("https://demo.prestapros.com/en/");
+        // Accept cookies
+        $("#iqitcookielaw-accept").click();
+    }
+
+    @When("he adds the item {string} to shopping cart")
+    public void he_adds_the_item_to_shopping_cart(String itemName) {
+        // Search
+        $(byName("s")).clear();
+        $(byName("s")).setValue(itemName).pressEnter();
+        // Select product
+        $$(byCssSelector("article .product-description a")).findBy(text(itemName)).click();
+        // Add to cart
+        $(".product-information").scrollIntoView(true);
+        $("button.add-to-cart").shouldBe(visible);
+        $("button.add-to-cart").click();
+        Selenide.sleep(2000);
+    }
+
+    @Then("he should see the {string} in the cart with quantity {int}")
+    public void he_should_see_the_in_the_cart_with_quantity(String itemName, Integer qty) {
+        open("https://demo.prestapros.com/en/cart");
+        SelenideElement element = $$("ul.cart-items li.cart-item .product-line-info a").
+                findBy(exactText(itemName));
+        SelenideElement row = element.ancestor("li");
+        row.$(".qty input").shouldHave(value(String.valueOf(qty)));
+    }
+}
+```
 
 
