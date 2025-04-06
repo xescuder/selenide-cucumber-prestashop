@@ -14,6 +14,13 @@
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <cucumber-java.version>7.11.2</cucumber-java.version>
+    <cucumber-junit.version>7.11.2</cucumber-junit.version>
+    <selenide.version>7.2.3</selenide.version>
+    <assertj-core.version>3.25.3</assertj-core.version>
+    <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+    <allure-cucumber7-jvm.version>2.29.1</allure-cucumber7-jvm.version>
+    <allure-maven.version>2.11.2</allure-maven.version>
   </properties>
 
 
@@ -22,14 +29,14 @@
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-java</artifactId>
-      <version>7.11.2</version>
+      <version>${cucumber-java.version}</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-junit -->
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-junit</artifactId>
-      <version>7.11.2</version>
+      <version>${cucumber-junit.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -37,15 +44,22 @@
     <dependency>
       <groupId>com.codeborne</groupId>
       <artifactId>selenide</artifactId>
-      <version>7.2.3</version>
+      <version>${selenide.version}</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.assertj/assertj-core -->
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.25.3</version>
+      <version>${assertj-core.version}</version>
       <scope>test</scope>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/io.qameta.allure/allure-cucumber-jvm -->
+    <dependency>
+      <groupId>io.qameta.allure</groupId>
+      <artifactId>allure-cucumber7-jvm</artifactId>
+      <version>${allure-cucumber7-jvm.version}</version>
     </dependency>
 
   </dependencies>
@@ -55,10 +69,20 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.2.5</version>
+          <version>${maven-surefire-plugin.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-maven</artifactId>
+        <version>${allure-maven.version}</version>
+      </plugin>
+    </plugins>
+
+
   </build>
 
 </project>
